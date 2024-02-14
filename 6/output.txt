@@ -1,0 +1,6 @@
+2 - 5    cost:2
+3 - 4    cost:6
+0 - 1    cost:7
+0 - 2    cost:9
+4 - 5    cost:9
+Minimum cost = 33

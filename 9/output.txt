@@ -1,0 +1,6 @@
+Distance from vertex 0 to vertex 0: 0
+Distance from vertex 0 to vertex 1: 7
+Distance from vertex 0 to vertex 2: 9
+Distance from vertex 0 to vertex 3: 20
+Distance from vertex 0 to vertex 4: 20
+Distance from vertex 0 to vertex 5: 11
