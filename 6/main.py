@@ -18,23 +18,28 @@ def kruskalMST(cost):
     for i in range(V):
         parent[i] = i
 
+    # Создание списка ребер для сортировки
+    edges = []
+    for i in range(V):
+        for j in range(i+1, V):
+            if cost[i][j] != 0:
+                edges.append((i, j, cost[i][j]))
+    
+    # Сортировка ребер по их весу
+    edges.sort(key=lambda x: x[2])
+
     # Включаем минимальные ребра по одному
     edge_count = 0
     with open('output.txt', 'w') as f:
-        while edge_count < V - 1:
-            min = float('inf')
-            a = -1
-            b = -1
-            for i in range(V):
-                for j in range(V):
-                    if find(i) != find(j) and cost[i][j] != 0 and cost[i][j] < min:
-                        min = cost[i][j]
-                        a = i
-                        b = j
-            union(a, b)
-            f.write(f'{a} - {b}    cost: {cost[a][b]}\n')
-            edge_count += 1
-            mincost += min
+        for edge in edges:
+            a, b, weight = edge
+            if find(a) != find(b): # Проверяем, находятся ли вершины a и b в одном и том же множестве.
+                union(a, b)
+                f.write(f'{a} - {b}    cost: {weight}\n')
+                mincost += weight
+                edge_count += 1
+                if edge_count == V - 1:
+                    break
 
         f.write(f"Minimum cost = {mincost}\n")
 

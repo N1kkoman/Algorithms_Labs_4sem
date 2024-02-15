@@ -26,7 +26,7 @@ class Graph:
     def dijkstra(self, src):
         dist = [sys.maxsize] * self.V  # Инициализация массива расстояний
         dist[src] = 0  # Расстояние от начальной вершины до самой себя равно 0
-        sptSet = [False] * self.V  # Инициализация массива для отслеживания посещенных вершин
+        sptSet = [False] * self.V  # Массив для отслеживания посещенных вершин
 
         for _ in range(self.V):
             u = self.minDistance(dist, sptSet)  # Находим вершину с минимальным расстоянием
