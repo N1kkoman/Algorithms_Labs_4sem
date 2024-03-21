@@ -1,59 +1,47 @@
-NO_OF_CHARS = 256
+def build_automaton(pattern):
+    """
+    Функция для построения автомата на основе образца.
+    :param pattern: образец для поиска
+    :return: автомат в виде двумерного списка
+    """
+    m = len(pattern)
+    automaton = [[0] * 256 for _ in range(m + 1)]  # Создание двумерного списка для автомата
+    automaton[0][ord(pattern[0])] = 1  # Инициализация первого состояния автомата
 
-def getNextState(pat, M, state, x):
-	# Если символ c совпадает с следующим символом в образце,
-	# просто увеличиваем состояние
+    x = 0  # Переменная для хранения текущего состояния суффиксной ссылки
+    for j in range(1, m):  # Итерация по символам образца (кроме первого)
+        for c in range(256):  # Итерация по всем возможным символам (ASCII)
+            automaton[j][c] = automaton[x][c]  # Копирование переходов из состояния суффиксной ссылки
+        automaton[j][ord(pattern[j])] = j + 1  # Установка перехода для текущего символа образца
+        x = automaton[x][ord(pattern[j])]  # Обновление состояния суффиксной ссылки
 
-	if state < M and x == ord(pat[state]):
-		return state+1
+    for c in range(256):  # Итерация по всем возможным символам (ASCII)
+        automaton[m][c] = automaton[x][c]  # Копирование переходов из состояния суффиксной ссылки для последнего состояния
 
-	i=0
-	# ns хранит результат, который является следующим состоянием
+    return automaton  # Возвращение построенного автомата
 
-	# ns наконец содержит самый длинный префикс,
-	# который также является суффиксом в "pat[0..state-1]c"
+def search_pattern(text, pattern):
+    """
+    Функция для поиска образца в тексте с использованием автомата.
+    :param text: исходный текст
+    :param pattern: образец для поиска
+    """
+    m = len(pattern)  # Длина образца
+    n = len(text)  # Длина текста
+    automaton = build_automaton(pattern)  # Построение автомата на основе образца
 
-	# Начинаем с самого большого возможного значения и
-	# останавливаемся, когда найдем префикс, который также является суффиксом
-	for ns in range(state,0,-1):
-		if ord(pat[ns-1]) == x:
-			while(i<ns-1):
-				if pat[i] != pat[state-ns+1+i]:
-					break
-				i+=1
-			if i == ns-1:
-				return ns 
-	return 0
+    state = 0  # Начальное состояние автомата
+    for i in range(n):  # Итерация по символам текста
+        state = automaton[state][ord(text[i])]  # Обновление состояния автомата на основе текущего символа
+        if state == m:  # Если достигнуто конечное состояние автомата
+            print(f"Образец найден по индексу {i - m + 1}")  # Вывод сообщения о найденном вхождении образца
 
-def computeTF(pat, M):
-	global NO_OF_CHARS
+# Чтение исходной строки из файла
+with open("input.txt", "r") as file:
+    text = file.read()
 
-	TF = [[0 for i in range(NO_OF_CHARS)]\
-		for _ in range(M+1)]
-
-	for state in range(M+1):
-		for x in range(NO_OF_CHARS):
-			z = getNextState(pat, M, state, x)
-			TF[state][x] = z
-
-	return TF
-
-def search(pat, txt):
-	global NO_OF_CHARS
-	M = len(pat)
-	N = len(txt)
-	TF = computeTF(pat, M) 
-
-	# Обрабатываем текст по конечному автомату.
-	state=0
-	for i in range(N):
-		state = TF[state][ord(txt[i])]
-		if state == M:
-			print("Образец найден по индексу: {}".\
-				format(i-M+1))
-
-
-with open('input.txt', 'r', encoding='utf-8') as file:
-    txt = file.read().strip()
-pat = input("Введите строку поиска: ")
-search(pat, txt)
+# Ввод строки поиска с клавиатуры
+pattern = input("Введите строку поиска: ")
+print(build_automaton('b'))
+# Поиск образца в исходной строке
+search_pattern(text, pattern)
